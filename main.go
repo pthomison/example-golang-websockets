@@ -57,6 +57,7 @@ func WebSocketFunc(w http.ResponseWriter, r *http.Request) {
 
 	for {
 		_, countdown_byte, err := conn.ReadMessage()
+		// if client drops this err will be non-nil; ignoring seems to work for now
 		if err != nil {
 			return
 		}
@@ -64,7 +65,7 @@ func WebSocketFunc(w http.ResponseWriter, r *http.Request) {
 		countdown, err := strconv.Atoi(string(countdown_byte))
 		utils.Check(err)
 
-		for i := 0; i < countdown; i++ {
+		for i := 0; i <= countdown; i++ {
 			conn.WriteMessage(websocket.TextMessage, []byte(strconv.Itoa(countdown-i)))
 			time.Sleep(1 * time.Second)
 		}
