@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	utils "github.com/pthomison/golang-utils"
+	"github.com/pthomison/errcheck"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +30,7 @@ var (
 
 func main() {
 	err := rootCmd.Execute()
-	utils.Check(err)
+	errcheck.Check(err)
 }
 
 func run(cmd *cobra.Command, args []string) {
@@ -40,7 +40,7 @@ func run(cmd *cobra.Command, args []string) {
 
 func Server() {
 	web, err := fs.Sub(embeddedFiles, "web")
-	utils.Check(err)
+	errcheck.Check(err)
 
 	http.Handle("/", http.FileServer(http.FS(web)))
 	http.HandleFunc("/ws", WebSocketFunc)
@@ -50,7 +50,7 @@ func Server() {
 
 func WebSocketFunc(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
-	utils.Check(err)
+	errcheck.Check(err)
 	defer conn.Close()
 
 	fmt.Println("connected")
@@ -63,7 +63,7 @@ func WebSocketFunc(w http.ResponseWriter, r *http.Request) {
 		}
 
 		countdown, err := strconv.Atoi(string(countdown_byte))
-		utils.Check(err)
+		errcheck.Check(err)
 
 		for i := 0; i <= countdown; i++ {
 			conn.WriteMessage(websocket.TextMessage, []byte(strconv.Itoa(countdown-i)))
